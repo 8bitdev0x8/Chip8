@@ -2,6 +2,8 @@
 
 *Based on Austin Morlan’s emulator build guide and the “Awesome CHIP-8” resource list.*
 
+![CHIP-8](Images/Chip8.png)
+
 ---
 
 ## 1. Introduction
