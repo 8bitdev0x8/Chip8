@@ -1,8 +1,15 @@
+![CHIP-8](Images/Chip8.png)
+
+# CheckList
+
+- [x] CHIP-8 Emulator using C++
+- [ ] CHIP-8 Running on physical hardware
+- [ ] CHIP-8 Compiler tools
+- [ ] CHIP-8 ROM development tools
+
 # CHIP-8 – Technical Reference
 
 *Based on Austin Morlan’s emulator build guide and the “Awesome CHIP-8” resource list.*
-
-![CHIP-8](Images/Chip8.png)
 
 ---
 
