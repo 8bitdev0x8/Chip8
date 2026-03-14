@@ -1,12 +1,38 @@
 cmake_minimum_required(VERSION 3.13)
 
-# Pull in the Pico SDK from either local clone or PICO_SDK_PATH
-if(EXISTS "${CMAKE_SOURCE_DIR}/pico-sdk/external/pico_sdk_import.cmake")
-    include(${CMAKE_SOURCE_DIR}/pico-sdk/external/pico_sdk_import.cmake)
-elseif(DEFINED ENV{PICO_SDK_PATH} AND EXISTS "$ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake")
-    include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
+# Pull in the Pico SDK from common locations.
+# Priority: -DPICO_SDK_PATH, repo-local clone, environment variable, build tree fallback.
+set(_PICO_SDK_CANDIDATES)
+
+if(DEFINED PICO_SDK_PATH)
+    list(APPEND _PICO_SDK_CANDIDATES "${PICO_SDK_PATH}")
+endif()
+
+list(APPEND _PICO_SDK_CANDIDATES
+    "${CMAKE_SOURCE_DIR}/pico-sdk"
+)
+
+if(DEFINED ENV{PICO_SDK_PATH})
+    list(APPEND _PICO_SDK_CANDIDATES "$ENV{PICO_SDK_PATH}")
+endif()
+
+list(APPEND _PICO_SDK_CANDIDATES
+    "${CMAKE_BINARY_DIR}/pico-sdk"
+)
+
+set(_PICO_SDK_IMPORT)
+foreach(_sdk_path IN LISTS _PICO_SDK_CANDIDATES)
+    if(EXISTS "${_sdk_path}/external/pico_sdk_import.cmake")
+        set(_PICO_SDK_IMPORT "${_sdk_path}/external/pico_sdk_import.cmake")
+        set(PICO_SDK_PATH "${_sdk_path}" CACHE PATH "Path to Pico SDK" FORCE)
+        break()
+    endif()
+endforeach()
+
+if(_PICO_SDK_IMPORT)
+    include("${_PICO_SDK_IMPORT}")
 else()
-    message(FATAL_ERROR "Pico SDK not found. Clone it to ${CMAKE_SOURCE_DIR}/pico-sdk or set PICO_SDK_PATH.")
+    message(FATAL_ERROR "Pico SDK not found. Clone it to ${CMAKE_SOURCE_DIR}/pico-sdk, pass -DPICO_SDK_PATH=<path>, or set PICO_SDK_PATH.")
 endif()
 
 project(chip8 C CXX ASM)
