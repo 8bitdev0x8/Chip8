@@ -23,7 +23,7 @@ Install these on your machine:
 ## 1) Clone the repository
 
 ```powershell
-git clone https://github.com/<your-user>/Chip8.git
+git clone https://github.com/8bitdev0x8/Chip8.git
 cd Chip8
 ```
 
