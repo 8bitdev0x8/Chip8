@@ -9,6 +9,31 @@
 
 # CHIP-8 – Technical Reference
 
+## Codebase Architecture
+
+The app is split into four simple parts. The app connects the components; the CHIP-8 CPU owns emulated state and instructions; keyboard maps GLFW keys to the CHIP-8 keypad; display sends the framebuffer to OpenGL.
+
+```text
+                 +------------------+
+                 |    App / main    |
+                 | run loop + ImGui |
+                 +--------+---------+
+                          |
+            +-------------+-------------+
+            |                           |
+     +------v------+             +------v------+
+     | CHIP-8 CPU  |             |  Keyboard   |
+     | Chip8.h     |             | Keyboard.*  |
+     +------+------+             +-------------+
+            |
+     +------v------+
+     |   Display   |
+     |  Display.*  |
+     +-------------+
+```
+
+`main.cpp` owns the desktop app and debugger UI. `Chip8.h` contains the CPU and machine state, `Keyboard.cpp` translates host key presses, and `Display.cpp` uploads the machine framebuffer for rendering.
+
 *Based on Austin Morlan’s emulator build guide and the “Awesome CHIP-8” resource list.*
 
 ---
@@ -162,4 +187,29 @@ CHIP-8 is a compact, educational virtual machine with minimal complexity: 4 KB m
 - Austin Morlan: *Building a CHIP-8 Emulator [C++]*. ([https://austinmorlan.com/posts/chip8_emulator/](https://austinmorlan.com/posts/chip8_emulator/))
 - “Awesome CHIP-8” list of documentation, tools, resources. ([https://chip-8.github.io/links/](https://chip-8.github.io/links/))
 - Cowgod’s CHIP-8 Technical Reference. ([https://devernay.free.fr/hacks/chip8/C8TECH10.HTM](https://devernay.free.fr/hacks/chip8/C8TECH10.HTM))
+
+## Build and run on Windows
+
+Install Visual Studio 2022 with the Desktop development with C++ workload and CMake. From a PowerShell prompt in the repository root, run:
+
+```powershell
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+cmake --build build --config Release
+.\build\Release\chip8.exe
+```
+
+CMake downloads GLFW and Dear ImGui into `build/_deps` during the first configure. Enter a ROM path in the **Debugger** window and choose **Load** or **Browse...**, or open **File > Open ROM...** from the menu. Use **Run**, **Step**, or **Step Back** in the debugger. The CPU rate is capped at 1,000 cycles per second, with catch-up limited after a stalled frame.
+
+### Keyboard and debugger controls
+
+The CHIP-8 keypad maps to the keyboard like this:
+
+```text
+CHIP-8:  1 2 3 C     Keyboard:  1 2 3 4
+         4 5 6 D                Q W E R
+         7 8 9 E                A S D F
+         A 0 B F                Z X C V
+```
+
+Use **Run/Pause** to start or stop execution, **Step** to execute one instruction, **Step Back** to restore the previous instruction state, and **Reset** to clear the emulator before loading another ROM. On first launch, the display, debugger, disassembly, memory, and stack windows are arranged in columns; choose **Window > Reset Window Positions** to restore that layout. ImGui remembers layout changes for later launches. **Help > About** shows the project attribution.
 

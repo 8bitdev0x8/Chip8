@@ -1,4 +1,5 @@
 /chip8/.vs
+/build
 /chip8/x64
 /chip8/vcpkg
 /chip8/imgui
